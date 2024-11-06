@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAN Card OCR</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">PAN Card OCR Extractor</h2>
+        <div class="card p-4 mt-3">
+            <form id="uploadForm" enctype="multipart/form-data" method="POST" action="/upload">
+                <div class="form-group">
+                    <label for="fileInput">Upload PAN Card Image</label>
+                    <input type="file" class="form-control" id="fileInput" name="file" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Extract Details</button>
+            </form>
+        </div>
+        
+        <!-- Display extracted details -->
+        <div class="card p-4 mt-4" id="results" style="display: none;">
+            <h4>Extracted PAN Card Details</h4>
+            <p><strong>Name:</strong> <span id="name">Not found</span></p>
+            <p><strong>Father's Name:</strong> <span id="fatherName">Not found</span></p>
+            <p><strong>Date of Birth:</strong> <span id="dob">Not found</span></p>
+            <p><strong>PAN Number:</strong> <span id="panNumber">Not found</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (event) => {
+            event.preventDefault();
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+
+            // Send data to the backend
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            // Display extracted details
+            document.getElementById('name').textContent = data.name;
+            document.getElementById('fatherName').textContent = data.fatherName;
+            document.getElementById('dob').textContent = data.dob;
+            document.getElementById('panNumber').textContent = data.panNumber;
+            document.getElementById('results').style.display = 'block';
+        };
+    </script>
+</body>
+</html>
